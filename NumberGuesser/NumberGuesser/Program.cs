@@ -56,7 +56,7 @@ namespace NumberGuesser
         void ShowAppInfo()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("VERSION 1.0.0 by iSW007");
+            Console.WriteLine("VERSION 1.0.1 by iSW007");
             Console.WriteLine("LICENSE BY ISEL");
             Console.ForegroundColor = ConsoleColor.White;
 
