@@ -1,27 +1,59 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NumberGuesser
 {
     class Program
     {
-        static int MAX = 100,MIN=1;
-        static Random rnd = new Random();
+        int MAX = 100,MIN=1;
+        Random rnd = new Random();
 
-        static void Main(string[] args)
+        Boolean MainMenu()
         {
-            Play();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Welcome! Choose an option");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("1. Play NumberGuesser");
+            Console.WriteLine("2. Check Hall of Fame(who beat the game previously)");
+            Console.WriteLine("3. Exit");
+            Console.ForegroundColor = ConsoleColor.White;
+            string op=Console.ReadLine();
+            int k = Int32.Parse(op);
+            switch (k)
+            {
+                case 1: { Play(); return false; }
+                case 2: { HallOfFame(); MainMenu(); return false; }
+                case 3: { return true; }
+            }
+            return true;
             
         }
 
-        static void Play()
+        void HallOfFame()
         {
-            ShowAppInfo();
-            GreetPlayer();
-            AskPlayer();
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine(" HALL OF FAME ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string text = System.IO.File.ReadAllText(@"C:\Users\luisg\Documents\csProjects\NumberGuesser\NumberGuesser\halloffame.txt");      
+            Console.WriteLine("{0}", text);
+        }
+
+        static void Main(string[] args)
+        {
+            Program pg = new Program();
+            pg.ShowAppInfo();
+            if (pg.MainMenu()) return;
+            
+        }
+
+        void Play()
+        {
+            string player=GreetPlayer();
+            AskPlayer(player);
 
         }
 
-        static void ShowAppInfo()
+        void ShowAppInfo()
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("VERSION 1.0.0 by iSW007");
@@ -30,7 +62,7 @@ namespace NumberGuesser
 
         }
 
-        static void GreetPlayer()
+        string GreetPlayer()
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("Welcome Player! What is your name?\n");
@@ -40,19 +72,31 @@ namespace NumberGuesser
             Console.Write("Hi {0}\n", playerName);
             Console.Write("Let's play a game! The Number Guesser game\n");
             Console.ForegroundColor = ConsoleColor.White;
+            return playerName;
         }
 
-        static void wonGame()
+        void AddToHallOfFame(string player)
+        {
+            using (System.IO.StreamWriter file =
+             new System.IO.StreamWriter(@"C:\Users\luisg\Documents\csProjects\NumberGuesser\NumberGuesser\halloffame.txt", true))
+            {
+                file.WriteLine(player);
+            }
+
+        }
+
+        void WonGame(string player)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("You guessed it! Want to play again?");
+            AddToHallOfFame(player);
             Console.ForegroundColor = ConsoleColor.White;
             string c = Console.ReadLine().ToUpper();
             if (c == "Y") Play();
             else return;
         }
 
-        static void AskPlayer()
+        void AskPlayer(string player)
         {
             int x = GenerateAnswer();
             Console.ForegroundColor = ConsoleColor.Green;
@@ -73,11 +117,11 @@ namespace NumberGuesser
                 answer = Int32.Parse(guess);
                 
             }
-            wonGame();
+            WonGame(player);
             return;
         }
 
-        static int GenerateAnswer()
+        int GenerateAnswer()
         {
            return rnd.Next(MIN,MAX+1);
         }
